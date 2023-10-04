@@ -56,7 +56,7 @@ function StrefaTestu({
         onSetOdpowiedzUsera={onSetOdpowiedzUsera}
       />
       <Button onClick={() => handleCheck(odpowiedzUsera, test, curQuestion)}>
-        Sprawdź
+        Sprawdźaaaaaaaaaaaaaa
       </Button>
     </>
   );
