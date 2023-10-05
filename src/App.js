@@ -1,113 +1,156 @@
 import React, { useState } from "react";
 
-const pytaniaUsera = [
+const testQuestions = [
   {
-    pytanie: "pies",
-    odpowiedz: "dog",
+    question: "1",
+    answear: "1",
+    done: false,
+    id: 1,
+    prev: false,
+  },
+
+  {
+    question: "2",
+    answear: "1",
+    done: false,
+    id: 1,
+    prev: false,
+  },
+
+  {
+    question: "3",
+    answear: "1",
+    done: false,
+    id: 3,
+    prev: false,
   },
   {
-    pytanie: "kot",
-    odpowiedz: "cat",
+    question: "4",
+    answear: "1",
+    done: false,
+    id: 4,
+    prev: false,
   },
   {
-    pytanie: "żyrawa",
-    odpowiedz: "giraffe",
+    question: "5",
+    answear: "1",
+    done: false,
+    id: 5,
+    prev: false,
   },
+  // {
+  //   question: "6",
+  //   answear: "1",
+  //   done: false,
+  //   id: 6,
+  //   prev: false,
+  // },
 ];
 
 function App() {
-  const test = pytaniaUsera;
-  const [odpowiedzUsera, setOdpowiedzUsera] = useState("");
-  const [curQuestion, setCurQuestion] = useState(0);
+  let rand = 0;
+  const [questions, setQuestions] = useState("");
+  const [curQuestion, setCurQuestion] = useState(rand);
+  const [usersTry, setUserstry] = useState("");
+  const [points, setPoints] = useState(0);
+
+  function randomQuestion() {
+    if (questions.length > 4) {
+      rand = Math.floor(Math.random() * 4);
+    } else {
+      if (questions.length === 3) {
+        rand = Math.floor(Math.random() * (questions.length - 1));
+      }
+      if (questions.length === 2) {
+        rand = 1;
+      }
+      if (questions.length === 1) {
+        rand = 0;
+      }
+
+      rand = 0;
+    }
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (usersTry.length < 1) {
+      return;
+    }
+
+    if (usersTry === questions[curQuestion].answear) {
+      questions[curQuestion].done = true;
+      setQuestions(questions.filter((q) => !q.done));
+      setPoints(points + 1);
+    } else {
+      // questions[curQuestion].prev = true;
+    }
+    randomQuestion();
+
+    setUserstry("");
+  }
+
+  function handleStart() {
+    setQuestions(testQuestions);
+    setUserstry("");
+  }
 
   return (
     <div className="App">
-      <Pytania test={test} />
-      <Button onClick={handleStartTest}>Zacznij test</Button>
-      <StrefaTestu
-        odpowiedzUsera={odpowiedzUsera}
-        onSetOdpowiedzUsera={setOdpowiedzUsera}
-        test={test}
-        curQuestion={curQuestion}
-        setCurQuestion={setCurQuestion}
-      />
+      <div className="settings">
+        <p className="points">{points}</p>
+      </div>
+
+      <div className="progress">
+        {testQuestions.map((it) => (
+          <div
+            className="innerprogress"
+            style={{
+              width: `${100 / testQuestions.length}%`,
+              background: `${it.done ? "green" : "yellow"}`,
+            }}
+          ></div>
+        ))}
+      </div>
+      {questions.length === 0 && (
+        <div>
+          <ul className="q-list">
+            {testQuestions.map((pyt) => (
+              <li>
+                {pyt.question} {!pyt.done ? "" : "👍"}
+              </li>
+            ))}
+          </ul>
+          <button onClick={handleStart}>Zacznij Test</button>
+        </div>
+      )}
+
+      {questions.length > 0 && (
+        <div className="testArea">
+          <ul className="q-list">
+            {questions.map((pyt) => (
+              <li>
+                {pyt.question} - id {pyt.id}
+              </li>
+            ))}
+          </ul>
+          <form onSubmit={handleSubmit}>
+            <label className="test-question">
+              <p>{questions[curQuestion]?.question}</p>
+            </label>
+
+            <input
+              type="text"
+              value={usersTry}
+              onChange={(e) => setUserstry(e.target.value)}
+            />
+            <button>Sprawdź</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
 
 export default App;
-
-function StrefaTestu({
-  odpowiedzUsera,
-  onSetOdpowiedzUsera,
-  test,
-  curQuestion,
-  setCurQuestion,
-}) {
-  return (
-    <>
-      <Question
-        test={test}
-        curQuestion={curQuestion}
-        setCurQuestion={setCurQuestion}
-      />
-      <Input
-        odpowiedzUsera={odpowiedzUsera}
-        onSetOdpowiedzUsera={onSetOdpowiedzUsera}
-      />
-      <Button onClick={() => handleCheck(odpowiedzUsera, test, curQuestion)}>
-        Sprawdź
-      </Button>
-    </>
-  );
-}
-
-function Question({ test, curQuestion, setCurQuestion }) {
-  return <p>{test[curQuestion].pytanie}</p>;
-}
-
-function Pytania({ test }) {
-  return (
-    <ul>
-      {test.map((pytanie) => (
-        <Pytanie pytanie={pytanie} key={crypto.randomUUID()} />
-      ))}
-    </ul>
-  );
-}
-
-function Pytanie({ pytanie }) {
-  return (
-    <li>
-      {pytanie.pytanie} - {pytanie.odpowiedz}
-    </li>
-  );
-}
-
-function Button({ onClick, children }) {
-  return <button onClick={onClick}>{children}</button>;
-}
-
-function handleStartTest() {
-  console.log("pytaniaUsera");
-}
-
-function handleCheck(odpowiedzUsera, pytania, curQuestion) {
-  console.log(odpowiedzUsera);
-  console.log(pytania[curQuestion].odpowiedz);
-  odpowiedzUsera === pytania[curQuestion].odpowiedz
-    ? console.log("dobrze")
-    : console.log("zle");
-}
-
-function Input({ odpowiedzUsera, onSetOdpowiedzUsera }) {
-  return (
-    <div>
-      <input
-        type="text"
-        value={odpowiedzUsera}
-        onChange={(e) => onSetOdpowiedzUsera(e.target.value)}
-      />
-    </div>
-  );
-}
