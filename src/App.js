@@ -1,98 +1,61 @@
 import React, { useState } from "react";
 
 const testQuestions = [
-  {
-    question: "1",
-    answear: "1",
-    done: false,
-    id: 1,
-    prev: false,
-  },
-
-  {
-    question: "2",
-    answear: "1",
-    done: false,
-    id: 1,
-    prev: false,
-  },
-
-  {
-    question: "3",
-    answear: "1",
-    done: false,
-    id: 3,
-    prev: false,
-  },
-  {
-    question: "4",
-    answear: "1",
-    done: false,
-    id: 4,
-    prev: false,
-  },
-  {
-    question: "5",
-    answear: "1",
-    done: false,
-    id: 5,
-    prev: false,
-  },
-  // {
-  //   question: "6",
-  //   answear: "1",
-  //   done: false,
-  //   id: 6,
-  //   prev: false,
-  // },
+  { pytanie: "a", done: false },
+  { pytanie: "b", done: false },
+  { pytanie: "c", done: false },
+  { pytanie: "d", done: false },
+  { pytanie: "e", done: false },
 ];
 
 function App() {
-  let rand = 0;
-  const [questions, setQuestions] = useState("");
-  const [curQuestion, setCurQuestion] = useState(rand);
+  const [questions, setQuestions] = useState(testQuestions);
+  const [curQuestion, setCurQuestion] = useState(null);
+  const [prevQuestion, setPrevQuestion] = useState(null);
   const [usersTry, setUserstry] = useState("");
   const [points, setPoints] = useState(0);
-
-  function randomQuestion() {
-    if (questions.length > 4) {
-      rand = Math.floor(Math.random() * 4);
-    } else {
-      if (questions.length === 3) {
-        rand = Math.floor(Math.random() * (questions.length - 1));
-      }
-      if (questions.length === 2) {
-        rand = 1;
-      }
-      if (questions.length === 1) {
-        rand = 0;
-      }
-
-      rand = 0;
-    }
-  }
+  const [started, setStarted] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    if (usersTry.length < 1) {
-      return;
-    }
+    // Funkcja do losowania liczby
 
-    if (usersTry === questions[curQuestion].answear) {
-      questions[curQuestion].done = true;
-      setQuestions(questions.filter((q) => !q.done));
+    if (usersTry === curQuestion.pytanie) {
+      /////////////////////////////////////////////dobrze
+      curQuestion.done = true;
+
+      setQuestions(questions.filter((q) => q !== curQuestion));
+
       setPoints(points + 1);
-    } else {
-      // questions[curQuestion].prev = true;
     }
-    randomQuestion();
-
+    if (usersTry !== curQuestion.pytanie) {
+      /////////////////////////////////////////////zle
+      console.log("zle");
+    }
     setUserstry("");
+
+    let randomNumber;
+
+    if (questions.length > 1) {
+      do {
+        if (questions.length > 4) {
+          randomNumber = questions[Math.floor(Math.random() * 4)];
+        }
+        if (questions.length <= 4) {
+          randomNumber =
+            questions[Math.floor(Math.random() * questions.length)];
+        }
+      } while (randomNumber === curQuestion); // Upewnij się, że wylosowana liczba jest różna od poprzedniej}
+    }
+
+    setPrevQuestion(curQuestion);
+    setCurQuestion(randomNumber);
   }
 
   function handleStart() {
-    setQuestions(testQuestions);
+    setStarted(true);
+    setCurQuestion(questions[Math.floor(Math.random() * questions.length)]);
     setUserstry("");
   }
 
@@ -103,22 +66,24 @@ function App() {
       </div>
 
       <div className="progress">
-        {testQuestions.map((it) => (
-          <div
-            className="innerprogress"
-            style={{
-              width: `${100 / testQuestions.length}%`,
-              background: `${it.done ? "green" : "yellow"}`,
-            }}
-          ></div>
-        ))}
+        {testQuestions
+          .sort((a, b) => b.done - a.done)
+          .map((it) => (
+            <div
+              className="innerprogress"
+              style={{
+                width: `${100 / testQuestions.length}%`,
+                background: `${it.done ? "green" : "yellow"}`,
+              }}
+            ></div>
+          ))}
       </div>
-      {questions.length === 0 && (
+      {!started && (
         <div>
           <ul className="q-list">
             {testQuestions.map((pyt) => (
               <li>
-                {pyt.question} {!pyt.done ? "" : "👍"}
+                tq {pyt.pytanie} {!pyt.done ? "" : "👍"}
               </li>
             ))}
           </ul>
@@ -126,18 +91,17 @@ function App() {
         </div>
       )}
 
-      {questions.length > 0 && (
+      {started && (
         <div className="testArea">
           <ul className="q-list">
             {questions.map((pyt) => (
-              <li>
-                {pyt.question} - id {pyt.id}
-              </li>
+              <li>q - {pyt.pytanie}</li>
             ))}
           </ul>
           <form onSubmit={handleSubmit}>
             <label className="test-question">
-              <p>{questions[curQuestion]?.question}</p>
+              <p>{prevQuestion ? prevQuestion.pytanie : ""}</p>
+              <p>{curQuestion ? curQuestion.pytanie : ""}</p>
             </label>
 
             <input
