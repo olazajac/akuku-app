@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const testQuestions = [
   { question: "a", done: false, answear: "1", badanswear: 0 },
@@ -14,22 +14,39 @@ function App() {
   const [prevQuestion, setPrevQuestion] = useState(null);
   const [usersTry, setUserstry] = useState("");
   const [points, setPoints] = useState(0);
-  const [started, setStarted] = useState(false);
+  const [phase, setPhase] = useState("intro");
+  const [badanswear, setBadanswear] = useState(0);
+  const [doneTest, setDoneTest] = useState([]);
+
+  useEffect(() => {
+    console.log(doneTest);
+  }, [doneTest]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", (event) => {
+      if (phase === "bad") {
+        console.log("aaaaaaaaa");
+      }
+    });
+  }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
-    setUserstry("");
 
     if (usersTry === curQuestion.answear) {
       /////////////////////////////////////////////dobrze
 
-      curQuestion.done = true;
+      const updatedCurQuestion = { ...curQuestion };
 
+      setDoneTest([...doneTest, updatedCurQuestion]);
+
+      curQuestion.done = true;
       setQuestions(questions.filter((q) => q !== curQuestion));
       setPoints(points + 1);
 
       if (questions.length === 1) {
-        setStarted(false);
+        setPhase("theEnd");
+
         return;
       }
     }
@@ -37,10 +54,13 @@ function App() {
     if (usersTry !== curQuestion.answear) {
       /////////////////////////////////////////////zle
       console.log("zle");
+      setPhase("bad");
+      setBadanswear(badanswear + 1);
       curQuestion.badanswear++;
-      console.log(curQuestion.badanswear);
-    }
 
+      console.log(phase);
+    }
+    setUserstry("");
     let randomNumber;
 
     if (questions.length > 1) {
@@ -63,7 +83,7 @@ function App() {
   }
 
   function handleStart() {
-    setStarted(true);
+    setPhase("testPhase");
     setCurQuestion(questions[Math.floor(Math.random() * questions.length)]);
     setUserstry("");
   }
@@ -87,7 +107,7 @@ function App() {
             ></div>
           ))}
       </div>
-      {!started && (
+      {phase === "intro" && (
         <div>
           <ul className="q-list">
             {testQuestions.map((item) => (
@@ -100,7 +120,7 @@ function App() {
         </div>
       )}
 
-      {started && (
+      {phase === "testPhase" && (
         <div className="testArea">
           <form onSubmit={handleSubmit}>
             <label className="test-question">
@@ -118,6 +138,24 @@ function App() {
             />
             <button>Sprawdź</button>
           </form>
+        </div>
+      )}
+
+      {phase === "bad" && (
+        <div onClick={() => setPhase("testPhase")}>
+          <p>bbb {curQuestion.answear}</p>
+          <p>aaa {usersTry}</p>
+        </div>
+      )}
+
+      {phase === "theEnd" && (
+        <div>
+          <p> Good answears: {points}</p>
+          <p>Bad answears: {badanswear}</p>
+          <p>
+            {" "}
+            Percentage: {Math.round((points * 100) / (points + badanswear))}
+          </p>
         </div>
       )}
     </div>
