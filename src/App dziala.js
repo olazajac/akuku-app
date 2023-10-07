@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
 const testQuestions = [
-  { question: "a", done: false, answear: "1", badanswear: 0 },
-  { question: "b", done: false, answear: "1", badanswear: 0 },
-  { question: "c", done: false, answear: "1", badanswear: 0 },
-  { question: "d", done: false, answear: "1", badanswear: 0 },
-  { question: "e", done: false, answear: "1", badanswear: 0 },
+  { pytanie: "a", done: false },
+  { pytanie: "b", done: false },
+  { pytanie: "c", done: false },
+  { pytanie: "d", done: false },
+  { pytanie: "e", done: false },
 ];
 
 function App() {
@@ -20,7 +20,9 @@ function App() {
     e.preventDefault();
     setUserstry("");
 
-    if (usersTry === curQuestion.answear) {
+    // Funkcja do losowania liczby
+
+    if (usersTry === curQuestion.pytanie) {
       /////////////////////////////////////////////dobrze
 
       curQuestion.done = true;
@@ -34,11 +36,9 @@ function App() {
       }
     }
 
-    if (usersTry !== curQuestion.answear) {
+    if (usersTry !== curQuestion.pytanie) {
       /////////////////////////////////////////////zle
       console.log("zle");
-      curQuestion.badanswear++;
-      console.log(curQuestion.badanswear);
     }
 
     let randomNumber;
@@ -90,9 +90,9 @@ function App() {
       {!started && (
         <div>
           <ul className="q-list">
-            {testQuestions.map((item) => (
+            {testQuestions.map((pyt) => (
               <li>
-                {item.question} {!item.done ? "" : "👍"}
+                {pyt.pytanie} {!pyt.done ? "" : "👍"}
               </li>
             ))}
           </ul>
@@ -102,11 +102,16 @@ function App() {
 
       {started && (
         <div className="testArea">
+          <ul className="q-list">
+            {questions.map((pyt) => (
+              <li>{pyt.pytanie}</li>
+            ))}
+          </ul>
           <form onSubmit={handleSubmit}>
             <label className="test-question">
               <p>
                 {curQuestion
-                  ? curQuestion.question
+                  ? curQuestion.pytanie
                   : `${questions.length} nie ma curquestion`}
               </p>
             </label>
