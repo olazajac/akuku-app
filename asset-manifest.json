@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/akuku-app/static/css/main.d4becd69.css",
-    "main.js": "/akuku-app/static/js/main.baae3f33.js",
+    "main.js": "/akuku-app/static/js/main.129cedaf.js",
     "index.html": "/akuku-app/index.html",
     "main.d4becd69.css.map": "/akuku-app/static/css/main.d4becd69.css.map",
-    "main.baae3f33.js.map": "/akuku-app/static/js/main.baae3f33.js.map"
+    "main.129cedaf.js.map": "/akuku-app/static/js/main.129cedaf.js.map"
   },
   "entrypoints": [
     "static/css/main.d4becd69.css",
-    "static/js/main.baae3f33.js"
+    "static/js/main.129cedaf.js"
   ]
 }
