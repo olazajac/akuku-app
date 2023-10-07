@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const testQuestions = [
   { question: "a", done: false, answear: "1", badanswear: 0 },
@@ -11,12 +11,14 @@ const testQuestions = [
 function App() {
   const [questions, setQuestions] = useState(testQuestions);
   const [curQuestion, setCurQuestion] = useState(null);
-  const [prevQuestion, setPrevQuestion] = useState(null);
+
   const [usersTry, setUserstry] = useState("");
   const [points, setPoints] = useState(0);
   const [phase, setPhase] = useState("intro");
   const [badanswear, setBadanswear] = useState(0);
   const [doneTest, setDoneTest] = useState([]);
+  const [isFocused, setIsFocused] = useState(true);
+  const inputRef = useRef(null);
 
   // Obsługa zdarzenia keydown
   const handleKeyDown = (e) => {
@@ -38,6 +40,9 @@ function App() {
   function handleSubmit(e) {
     e.preventDefault();
 
+    if (usersTry.length === 0) {
+      return;
+    }
     if (usersTry === curQuestion.answear) {
       /////////////////////////////////////////////dobrze
 
@@ -60,10 +65,9 @@ function App() {
       /////////////////////////////////////////////zle
       console.log("zle");
       setPhase("bad");
+
       setBadanswear(badanswear + 1);
       curQuestion.badanswear++;
-
-      console.log(phase);
     }
     setUserstry("");
     let randomNumber;
@@ -83,7 +87,6 @@ function App() {
       randomNumber = questions[0];
     }
 
-    setPrevQuestion(curQuestion);
     setCurQuestion(randomNumber);
   }
 
@@ -137,6 +140,8 @@ function App() {
             </label>
 
             <input
+              ref={inputRef}
+              autoFocus={isFocused}
               type="text"
               value={usersTry}
               onChange={(e) => setUserstry(e.target.value)}
