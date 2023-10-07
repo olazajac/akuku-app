@@ -24,6 +24,7 @@ function App() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       if (phase === "bad") {
+        setUserstry("");
         setPhase("testPhase");
       }
     }
@@ -59,6 +60,7 @@ function App() {
 
         return;
       }
+      setUserstry("");
     }
 
     if (usersTry !== curQuestion.answear) {
@@ -69,7 +71,7 @@ function App() {
       setBadanswear(badanswear + 1);
       curQuestion.badanswear++;
     }
-    setUserstry("");
+
     let randomNumber;
 
     if (questions.length > 1) {
@@ -153,17 +155,16 @@ function App() {
 
       {phase === "bad" && (
         <div onClick={() => setPhase("testPhase")}>
-          <p>bbb {curQuestion.answear}</p>
-          <p>aaa {usersTry}</p>
+          <p className="points"> {curQuestion.answear}</p>
+          <p className="points"> {usersTry}</p>
         </div>
       )}
 
       {phase === "theEnd" && (
         <div>
-          <p> Good answears: {points}</p>
-          <p>Bad answears: {badanswear}</p>
-          <p>
-            {" "}
+          <p className="points"> Good answears: {points}</p>
+          <p className="points">Bad answears: {badanswear}</p>
+          <p className="points">
             Percentage: {Math.round((points * 100) / (points + badanswear))}
           </p>
         </div>
