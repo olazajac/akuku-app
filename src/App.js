@@ -18,17 +18,22 @@ function App() {
   const [badanswear, setBadanswear] = useState(0);
   const [doneTest, setDoneTest] = useState([]);
 
-  useEffect(() => {
-    console.log(doneTest);
-  }, [doneTest]);
-
-  useEffect(() => {
-    window.addEventListener("keydown", (event) => {
+  // Obsługa zdarzenia keydown
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
       if (phase === "bad") {
-        console.log("aaaaaaaaa");
+        setPhase("testPhase");
       }
-    });
-  }, []);
+    }
+  };
+
+  // Dodajmy obsługę keydown przy załadowaniu komponentu
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [phase]);
 
   function handleSubmit(e) {
     e.preventDefault();
