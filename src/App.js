@@ -61,6 +61,7 @@ function App() {
         return;
       }
       setUserstry("");
+      setIsFocused(true);
     }
 
     if (usersTry !== curQuestion.answear) {
