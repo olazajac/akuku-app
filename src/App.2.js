@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import { testQuestions } from "./App";
 
-const testQuestions = [
-  { question: "a", done: false, answear: "1", badanswear: 0 },
-  { question: "b", done: false, answear: "1", badanswear: 0 },
-  { question: "c", done: false, answear: "1", badanswear: 0 },
-  { question: "d", done: false, answear: "1", badanswear: 0 },
-  { question: "e", done: false, answear: "1", badanswear: 0 },
-];
-
-function App() {
+export function App() {
   const [questions, setQuestions] = useState(testQuestions);
   const [curQuestion, setCurQuestion] = useState(null);
 
@@ -46,7 +39,6 @@ function App() {
     }
     if (usersTry === curQuestion.answear) {
       /////////////////////////////////////////////dobrze
-
       const updatedCurQuestion = { ...curQuestion };
 
       setDoneTest([...doneTest, updatedCurQuestion]);
@@ -168,12 +160,10 @@ function App() {
           </p>
           <p className="text-lg	text-center">Bad answears: {badanswear}</p>
           <p className="text-4xl text-center">
-            Percentage: {Math.round((points * 100) / (points + badanswear))}
+            Percentage: {Math.round((points * 100) / (points + badanswear))}%
           </p>
         </div>
       )}
     </div>
   );
 }
-
-export default App;
