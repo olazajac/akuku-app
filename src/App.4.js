@@ -1,21 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Intro } from "./Intro";
-import { Progress } from "./Progress";
-import { Settings } from "./Points";
-import { TestArea } from "./TestArea";
-import { AfterBadAnswear } from "./AfterBadAnswear";
+import { testQuestions } from "./App";
 
-const testQuestions = [
-  { question: "a", done: false, answear: "1", badanswear: 0 },
-  { question: "b", done: false, answear: "1", badanswear: 0 },
-  { question: "c", done: false, answear: "1", badanswear: 0 },
-  { question: "d", done: false, answear: "1", badanswear: 0 },
-  { question: "e", done: false, answear: "1", badanswear: 0 },
-];
-
-function App() {
-  const [repeats, setRepeats] = useState(true);
-  const [swap, setSwap] = useState(true);
+export function App() {
   const [questions, setQuestions] = useState(testQuestions);
   const [curQuestion, setCurQuestion] = useState(null);
 
@@ -25,7 +11,6 @@ function App() {
   const [badanswear, setBadanswear] = useState(0);
   const [doneTest, setDoneTest] = useState([]);
   const [isFocused, setIsFocused] = useState(true);
-
   const inputRef = useRef(null);
 
   // Obsługa zdarzenia keydown
@@ -54,7 +39,6 @@ function App() {
     }
     if (usersTry === curQuestion.answear) {
       /////////////////////////////////////////////dobrze
-
       const updatedCurQuestion = { ...curQuestion };
 
       setDoneTest([...doneTest, updatedCurQuestion]);
@@ -63,26 +47,22 @@ function App() {
       setQuestions(questions.filter((q) => q !== curQuestion));
       setPoints(points + 1);
 
+      if (questions.length === 1) {
+        setPhase("theEnd");
+
+        return;
+      }
       setUserstry("");
-      // inputRef.current.focus();
-      setIsFocused(true);
+      inputRef.current.focus();
     }
 
     if (usersTry !== curQuestion.answear) {
       /////////////////////////////////////////////zle
-
+      console.log("zle");
       setPhase("bad");
 
       setBadanswear(badanswear + 1);
       curQuestion.badanswear++;
-
-      repeats === "false" &&
-        setQuestions(questions.filter((q) => q.badanswear === 0));
-    }
-    if (questions.length === 1) {
-      setPhase("theEnd");
-
-      return;
     }
 
     let randomNumber;
@@ -106,47 +86,91 @@ function App() {
   }
 
   function handleStart() {
-    swap === true &&
-      questions.map((q) => {
-        let tempa = q.answer;
-        let tempq = q.question;
-
-        q.question = tempa;
-        q.answer = tempq;
-      });
-
     setPhase("testPhase");
     setCurQuestion(questions[Math.floor(Math.random() * questions.length)]);
     setUserstry("");
   }
 
+  function Settings() {
+    return (
+      <div className="settings">
+        <p className="points">{points}</p>
+      </div>
+    );
+  }
+
+  function Progress() {
+    return (
+      <div className="progress">
+        {testQuestions
+          .sort((a, b) => b.done - a.done)
+          .map((it) => (
+            <div
+              className="innerprogress"
+              style={{
+                width: `${100 / testQuestions.length}%`,
+                background: `${it.done ? "green" : "yellow"}`,
+              }}
+            ></div>
+          ))}
+      </div>
+    );
+  }
+
+  function Intro() {
+    return (
+      <>
+        {phase === "intro" && (
+          <div>
+            <ul className="q-list">
+              {testQuestions.map((item) => (
+                <li>
+                  {item.question} {!item.done ? "" : "👍"}
+                </li>
+              ))}
+            </ul>
+            <button onClick={handleStart}>Zacznij Test</button>
+          </div>
+        )}{" "}
+      </>
+    );
+  }
+
   return (
     <div className="App">
-      <Settings points={points} />
-      <Progress testQuestions={testQuestions} />
-      <Intro
-        phase={phase}
-        testQuestions={testQuestions}
-        handleStart={handleStart}
-      />
+      <Settings />
+      <Progress />
+      <Intro />
 
-      <TestArea
-        handleSubmit={handleSubmit}
-        curQuestion={curQuestion}
-        quesions={questions}
-        phase={phase}
-        inputRef={inputRef}
-        isFocused={isFocused}
-        usersTry={usersTry}
-        setUserstry={setUserstry}
-      />
+      {phase === "testPhase" && (
+        <div className="testArea">
+          <form onSubmit={handleSubmit}>
+            <label className="test-question">
+              <p>
+                {curQuestion
+                  ? curQuestion.question
+                  : `${questions.length} nie ma curquestion`}
+              </p>
+            </label>
 
-      <AfterBadAnswear
-        curQuestion={curQuestion}
-        usersTry={usersTry}
-        phase={phase}
-        setPhase={setPhase}
-      />
+            <input
+              ref={inputRef}
+              autoFocus={isFocused}
+              type="text"
+              value={usersTry}
+              onChange={(e) => setUserstry(e.target.value)}
+            />
+            <button>Sprawdź</button>
+          </form>
+        </div>
+      )}
+
+      {phase === "bad" && (
+        <div onClick={() => setPhase("testPhase")}>
+          <p className="points"> {curQuestion.answear}</p>
+          <p className="points"> {usersTry}</p>
+        </div>
+      )}
 
       {phase === "theEnd" && (
         <div>
@@ -162,5 +186,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
